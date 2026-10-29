@@ -1,0 +1,25 @@
+@model ProfileForm
+@{ ViewData["Title"] = "Hồ sơ quản trị"; ViewData["Description"] = "Cập nhật tên hiển thị và phần giới thiệu của tài khoản quản trị viên."; }
+<div class="admin-profile-grid">
+    <section class="management-panel profile-account-card">
+        <span class="profile-avatar"><i class="fas fa-user-shield" aria-hidden="true"></i></span>
+        <span class="admin-eyebrow">TÀI KHOẢN QUẢN TRỊ</span>
+        <h2>@Model.FullName</h2>
+        <p>@ViewBag.Email</p>
+        <dl><dt>Vai trò</dt><dd>Quản trị viên</dd><dt>Tham gia</dt><dd>@(((DateTime)ViewBag.CreatedAt).ToString("dd/MM/yyyy"))</dd></dl>
+    </section>
+    <section class="management-panel profile-edit-card">
+        <div class="panel-caption"><h2>Thông tin hồ sơ</h2></div>
+        <form method="post" action="/admin/profile">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="All" class="text-danger mb-3"></div>
+            <label asp-for="FullName">Tên hiển thị</label>
+            <input asp-for="FullName" class="form-control" required maxlength="100" />
+            <span asp-validation-for="FullName" class="text-danger"></span>
+            <label asp-for="Bio">Giới thiệu</label>
+            <textarea asp-for="Bio" class="form-control" rows="5" maxlength="1000" placeholder="Chia sẻ đôi điều về bạn..."></textarea>
+            <span asp-validation-for="Bio" class="text-danger"></span>
+            <div class="profile-form-actions"><button class="btn btn-success"><i class="fas fa-save"></i> Lưu hồ sơ</button></div>
+        </form>
+    </section>
+</div>

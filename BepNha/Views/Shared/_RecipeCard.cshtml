@@ -1,0 +1,16 @@
+@model Recipe
+<div class="col-6 col-lg-4">
+    <article class="recipe-card h-100">
+        <a class="recipe-image" href="/recipes/@Model.RecipeId"><img src="@Model.CoverImage" alt="@Model.Title" loading="lazy" /><span class="category-tag">@Model.Category.CategoryName</span></a>
+        <div class="recipe-body"><div class="d-flex justify-content-between small mb-3"><span class="rating">★ @Model.AverageRating.ToString("0.0") <span class="text-muted">(@Model.Reviews.Count đánh giá)</span></span><span>@Model.DifficultyText</span></div>
+        <h3><a href="/recipes/@Model.RecipeId">@Model.Title</a></h3><p>@Model.Summary</p>
+        <div class="recipe-meta"><a href="/authors/@Model.AuthorId"><i class="far fa-user"></i> @Model.Author.FullName</a><span><i class="far fa-clock"></i> @Model.CookMinutes phút</span></div>
+        @if (!Model.IsPublished) { <div class="alert alert-warning mt-3 mb-0"><strong>Đã bị ẩn:</strong> @Model.HiddenReason</div> }
+        @if (ViewData["Mine"] is true)
+        {
+            <div class="d-flex gap-2 mt-3"><a class="btn btn-outline-success" href="/recipes/@Model.RecipeId/edit">Sửa công thức</a><form method="post" action="/recipes/@Model.RecipeId/delete" data-confirm="Xóa mềm công thức này? Dữ liệu sẽ được giữ lại để quản trị viên có thể khôi phục.">@Html.AntiForgeryToken()<button class="btn btn-outline-danger">Xóa</button></form></div>
+        }
+        </div>
+    </article>
+</div>
+

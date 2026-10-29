@@ -1,0 +1,9 @@
+**/bin/
+**/obj/
+.vs/
+*.user
+*.suo
+**/wwwroot/uploads/*
+!**/wwwroot/uploads/.gitkeep
+tests/artifacts/
+tests/node_modules/

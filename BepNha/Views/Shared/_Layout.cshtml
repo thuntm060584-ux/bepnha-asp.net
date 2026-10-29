@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"] | Bếp Nhà</title>
+    <meta name="description" content="Bếp Nhà – cộng đồng chia sẻ công thức nấu ăn. Tìm món ngon theo nguyên liệu, chia sẻ cách nấu, đánh giá và theo dõi những người yêu bếp." />
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="~/assets/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/assets/css/font-awesome.css" />
+    <link rel="stylesheet" href="~/assets/css/main.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+    <a class="skip-link" href="#main">Đến nội dung chính</a>
+    <div class="topbar"><div class="container d-flex justify-content-between"><span><i class="fas fa-utensils"></i> Nấu bằng đam mê · Chia sẻ bằng cả trái tim</span><span>Cộng đồng yêu bếp Việt</span></div></div>
+    <header class="site-header"><nav class="container navbar navbar-expand-xl navbar-light" aria-label="Điều hướng chính">
+        <a class="navbar-brand text-brand" href="/" aria-label="Bếp Nhà — Trang chủ"><span>Bếp Nhà</span><small>Công thức hay, bữa cơm ấm</small></a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navigation" aria-controls="navigation" aria-expanded="false" aria-label="Mở menu"><span class="navbar-toggler-icon"></span></button>
+        <div class="collapse navbar-collapse" id="navigation"><div class="navbar-nav ms-auto align-items-lg-center gap-lg-3">
+            <a class="nav-link" href="/">Trang chủ</a><a class="nav-link" href="/recipes">Khám phá</a>
+            @if (User.IsInRole("member")) { <a class="nav-link" href="/feed">Bảng tin</a><a class="nav-link" href="/recipes/mine">Bếp của tôi</a> }
+            @if (User.IsInRole("admin")) { <a class="nav-link" href="/admin/recipes">Công thức</a><a class="nav-link" href="/admin/categories">Danh mục</a><a class="nav-link" href="/admin/users">Người dùng</a> }
+            @if (User.Identity?.IsAuthenticated == true)
+            {
+                <a class="nav-link" href="/account/profile">@User.Identity.Name</a>
+                <form method="post" action="/auth/logout">@Html.AntiForgeryToken()<button class="nav-link" type="submit">Đăng xuất</button></form>
+                @if (User.IsInRole("member")) { <a class="theme-btn compact" href="/recipes/new">+ Viết công thức</a> }
+            }
+            else { <a class="nav-link" href="/auth/login">Đăng nhập</a><a class="theme-btn compact" href="/auth/register">Tham gia ngay</a> }
+        </div></div>
+    </nav></header>
+    @if (TempData["Success"] is string success) { <div class="container mt-3" data-auto-dismiss><div class="alert alert-success" role="status">@success</div></div> }
+    @if (TempData["Error"] is string error) { <div class="container mt-3" data-auto-dismiss><div class="alert alert-danger" role="alert">@error</div></div> }
+    <main id="main">@RenderBody()</main>
+    <footer class="site-footer"><div class="container"><div class="row align-items-center g-4"><div class="col-md-7"><span class="eyebrow">MỖI MÓN ĂN LÀ MỘT CÂU CHUYỆN</span><h3>Cùng nhau giữ lửa căn bếp.</h3><p>Khám phá, nấu thử và chia sẻ công thức của bạn với cộng đồng.</p></div><div class="col-md-5 text-md-end"><a class="theme-btn" href="/recipes/new">Chia sẻ công thức <i class="fas fa-arrow-right"></i></a></div></div><div class="kitchen-footer-bottom"><span>© @DateTime.Now.Year Bếp Nhà · Cộng đồng chia sẻ công thức nấu ăn</span><a href="/recipes">Khám phá công thức <i class="fas fa-arrow-right"></i></a></div></div></footer>
+    <script src="~/assets/js/jquery-3.7.1.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/assets/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body></html>
+
+
+

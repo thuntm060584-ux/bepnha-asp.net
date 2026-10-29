@@ -1,0 +1,66 @@
+@model RecipeListModel
+@{ ViewData["Title"] = Model.Heading; ViewData["Mine"] = Model.IsMine; }
+@if (Model.IsHome)
+{
+    var featured = Model.Featured.FirstOrDefault() ?? Model.Recipes.FirstOrDefault();
+    <section class="community-hero"><div class="container"><div class="row align-items-center g-5">
+        <div class="col-lg-6 community-hero-content"><span class="eyebrow">BẾP NHÀ · CỘNG ĐỒNG CHIA SẺ CÔNG THỨC</span><h1>Món ngon mỗi ngày.<br /><span>Ấm một gian bếp.</span></h1><p>Tìm một món mới, lưu truyền một hương vị quen.<br class="d-none d-xl-block" /> Cùng những người yêu bếp chia sẻ công thức và kinh nghiệm nấu ăn mỗi ngày.</p>
+        <form class="hero-search" method="get" action="/recipes"><label for="hero-query" class="visually-hidden">Tìm tên món hoặc nguyên liệu</label><i class="fas fa-search" aria-hidden="true"></i><input id="hero-query" name="q" placeholder="Bạn có nguyên liệu gì trong bếp?" maxlength="200" /><button type="submit" class="theme-btn compact">Tìm công thức</button></form>
+        <div class="hero-actions"><a href="/recipes/new">Chia sẻ công thức của bạn <i class="fas fa-arrow-right"></i></a><span>Mỗi công thức là một câu chuyện.</span></div></div>
+        <div class="col-lg-6 community-hero-visual">
+        @if (featured is not null)
+        {
+            <article class="hero-recipe"><a class="hero-recipe-image" href="/recipes/@featured.RecipeId"><span class="hero-recipe-label"><i class="fas fa-book-open"></i> Gợi ý từ cộng đồng</span><img src="@featured.CoverImage" alt="@featured.Title" /></a><div class="hero-recipe-body"><div class="hero-recipe-byline"><span>@featured.Category.CategoryName</span><span class="rating">★ @featured.AverageRating.ToString("0.0") <small>(@featured.Reviews.Count đánh giá)</small></span></div><h2><a href="/recipes/@featured.RecipeId">@featured.Title</a></h2><div class="hero-recipe-meta"><a href="/authors/@featured.AuthorId">Bếp của @featured.Author.FullName</a><span><i class="far fa-clock"></i> @featured.CookMinutes phút · @featured.DifficultyText</span></div></div></article>
+        }
+        else
+        {
+            <div class="hero-start"><i class="fas fa-book-open"></i><h2>Gian bếp đang chờ câu chuyện đầu tiên.</h2><p>Bắt đầu bằng món ăn bạn yêu thích và chia sẻ cách nấu với mọi người.</p><a class="theme-btn" href="/recipes/new">Viết công thức đầu tiên</a></div>
+        }
+        </div>
+    </div></div></section>
+}
+else
+{
+    <section class="page-banner"><div class="container"><span class="eyebrow">BẾP NHÀ · CÙNG NẤU, CÙNG CHIA SẺ</span><h1>@Model.Heading</h1><p>Mỗi công thức là một câu chuyện được sẻ chia.</p></div></section>
+}
+@if (Model.IsHome)
+{
+    <section class="category-section"><div class="container"><div class="category-heading"><div><span class="eyebrow">BẠN ĐANG TÌM CẢM HỨNG?</span><h2>Món ngon cho mọi bữa ăn</h2></div><a href="/recipes">Xem tất cả <i class="fas fa-arrow-right"></i></a></div><div class="category-links">
+    @foreach (var category in Model.Categories) { var icon = category.CategoryName.Contains("chay") ? "fa-leaf" : category.CategoryName.Contains("nướng") ? "fa-fire" : category.CategoryName.Contains("Bánh") ? "fa-birthday-cake" : category.CategoryName.Contains("nhanh") ? "fa-hamburger" : "fa-utensils"; <a href="/recipes?category=@category.CategoryId"><span class="category-icon"><i class="fas @icon"></i></span><span>@category.CategoryName</span><i class="fas fa-arrow-right"></i></a> }
+    </div></div></section>
+}
+<section class="container page-section" id="recipes">
+    @if (Model.Author is not null)
+    {
+        <div class="author-panel mb-5"><div class="avatar">@Model.Author.FullName[..1]</div><div class="flex-grow-1"><h2>@Model.Author.FullName</h2><p>@Model.Author.Bio</p><span><b data-follower-count>@Model.Followers</b> người theo dõi · @Model.Total công thức công khai</span></div>
+            @if (User.IsInRole("member") && SessionService.UserId(User) != Model.Author.UserId && Model.Author.IsActive)
+            { <form action="/follows/toggle" method="post" data-follow>@Html.AntiForgeryToken()<input type="hidden" name="followingId" value="@Model.Author.UserId" /><button class="theme-btn compact" data-follow-button>@(Model.IsFollowing ? "Đang theo dõi · Bỏ theo dõi" : "Theo dõi tác giả")</button></form> }
+            else if (User.Identity?.IsAuthenticated != true) { <a class="btn btn-outline-success" href="/auth/login?returnUrl=/authors/@Model.Author.UserId">Đăng nhập để theo dõi</a> }
+        </div>
+    }
+    @if (!Model.IsMine && !Model.IsFeed && Model.Author is null)
+    {
+        @if (Model.IsHome) { <div class="section-title mb-4"><span class="eyebrow">CẢM HỨNG CHO BỮA ĂN MỖI NGÀY</span><h2>Khám phá <span>món ngon</span></h2></div> }
+        <form method="get" action="/recipes" class="filter-bar row g-3 align-items-end mb-5">
+            <div class="col-lg-4"><label for="q">Bạn muốn nấu món gì?</label><input class="form-control" id="q" name="q" value="@Model.Q" maxlength="200" placeholder="Tên món hoặc nguyên liệu..." /></div>
+            <div class="col-lg-2 col-sm-6"><label for="category">Danh mục</label><select class="form-select" id="category" name="category"><option value="">Tất cả danh mục</option>@foreach (var c in Model.Categories) { <option value="@c.CategoryId" selected="@(Model.Category == c.CategoryId)">@c.CategoryName</option> }</select></div>
+            <div class="col-lg-2 col-sm-6"><label for="difficulty">Độ khó</label><select class="form-select" id="difficulty" name="difficulty"><option value="">Tất cả</option><option value="1" selected="@(Model.Difficulty == 1)">Dễ</option><option value="2" selected="@(Model.Difficulty == 2)">Trung bình</option><option value="3" selected="@(Model.Difficulty == 3)">Khó</option></select></div>
+            <div class="col-lg-2 col-sm-6"><label for="sort">Sắp xếp</label><select class="form-select" id="sort" name="sort"><option value="newest" selected="@(Model.Sort != "rating")">Mới nhất</option><option value="rating" selected="@(Model.Sort == "rating")">Điểm cao nhất</option></select></div><div class="col-lg-2 col-sm-6"><button class="theme-btn compact w-100">Tìm món ngon</button></div>
+        </form>
+    }
+    <div class="results-heading d-flex justify-content-between align-items-center mb-4"><h2 class="list-heading">@(Model.IsMine ? "Gian bếp của bạn" : Model.IsFeed ? "Mới từ những người bạn theo dõi" : Model.Sort == "rating" ? "Công thức được đánh giá cao" : "Công thức mới nhất")</h2><span>@Model.Total công thức</span></div>
+    @if (Model.Recipes.Count == 0)
+    {
+        <div class="empty-state"><i class="fas fa-utensils"></i><h3>Chưa có công thức phù hợp</h3><p>@(Model.IsFeed ? "Hãy theo dõi tác giả ở trang chi tiết công thức để nhận món mới trong bảng tin." : Model.IsMine ? "Chia sẻ món ăn đầu tiên và bắt đầu câu chuyện căn bếp của bạn." : "Thử từ khóa hoặc bộ lọc khác để tìm món bạn thích.")</p><a class="theme-btn compact" href="@(Model.IsMine ? "/recipes/new" : "/recipes")">@(Model.IsMine ? "Đăng công thức đầu tiên" : "Khám phá công thức")</a></div>
+    }
+    <div class="row g-4">@foreach (var r in Model.Recipes) { <partial name="_RecipeCard" model="r" /> }</div>
+    @if (Model.Pages > 1)
+    {
+        <nav class="mt-5" aria-label="Phân trang"><ul class="pagination justify-content-center">@for (var p = Math.Max(1, Model.Page - 2); p <= Math.Min(Model.Pages, Model.Page + 2); p++) { <li class="page-item @(p == Model.Page ? "active" : "")"><a class="page-link" href="?q=@Uri.EscapeDataString(Model.Q ?? "")&category=@Model.Category&difficulty=@Model.Difficulty&sort=@Model.Sort&page=@p">@p</a></li> }</ul></nav>
+    }
+</section>
+@if (Model.IsHome && Model.Featured.Any())
+{
+    <section class="featured-section"><div class="container"><div class="section-title mb-4"><span class="eyebrow">ĐƯỢC CỘNG ĐỒNG YÊU THÍCH</span><h2>Công thức <span>nổi bật</span></h2></div><div class="row g-4">@foreach (var r in Model.Featured) { <partial name="_RecipeCard" model="r" /> }</div></div></section>
+}
+

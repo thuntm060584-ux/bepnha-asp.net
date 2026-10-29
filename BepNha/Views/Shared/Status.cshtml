@@ -1,0 +1,5 @@
+@model int
+@{ ViewData["Title"] = "Thông báo " + Model; }
+<section class="container page-section text-center"><span class="eyebrow">BẾP NHÀ</span><h1>@Model</h1><h2>@(Model == 404 ? "Không tìm thấy nội dung" : Model == 403 ? "Bạn không có quyền truy cập" : Model == 400 ? "Yêu cầu không hợp lệ" : "Không thể xử lý yêu cầu")</h2><p class="my-4">@(Model == 404 ? "Công thức có thể đã bị ẩn hoặc xóa." : Model == 400 ? "Vui lòng tải lại trang và kiểm tra dữ liệu trước khi gửi lại." : "Vui lòng quay lại hoặc thử lại sau.")</p><a class="theme-btn" href="/">Về trang chủ</a></section>
+
+

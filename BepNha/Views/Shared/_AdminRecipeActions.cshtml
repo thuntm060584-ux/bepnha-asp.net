@@ -1,0 +1,13 @@
+@model Recipe
+<div class="management-actions">
+@if (Model.IsDeleted)
+{
+    <form method="post" action="/admin/recipes/@Model.RecipeId/undelete" data-confirm="Khôi phục công thức này? Trạng thái hiển thị trước khi xóa sẽ được giữ nguyên.">@Html.AntiForgeryToken()<button class="btn btn-sm btn-success"><i class="fas fa-undo"></i> Khôi phục</button></form>
+}
+else
+{
+    @if (Model.IsPublished) { <button class="btn btn-sm btn-outline-warning" type="button" data-bs-toggle="modal" data-bs-target="#hide-recipe" data-recipe-id="@Model.RecipeId" data-recipe-title="@Model.Title"><i class="far fa-eye-slash"></i> Ẩn</button> }
+    else { <form method="post" action="/admin/recipes/@Model.RecipeId/restore">@Html.AntiForgeryToken()<button class="btn btn-sm btn-outline-success"><i class="far fa-eye"></i> Hiển thị</button></form> }
+    <form method="post" action="/admin/recipes/@Model.RecipeId/delete" data-confirm="Chuyển công thức vào mục Đã xóa? Dữ liệu và ảnh sẽ được giữ lại để khôi phục.">@Html.AntiForgeryToken()<button class="btn btn-sm btn-outline-danger"><i class="far fa-trash-alt"></i> Xóa</button></form>
+}
+</div>

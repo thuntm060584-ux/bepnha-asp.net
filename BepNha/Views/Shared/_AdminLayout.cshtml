@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>@ViewData["Title"] | Quản trị Bếp Nhà</title><link rel="icon" href="data:," /><link rel="stylesheet" href="~/assets/css/bootstrap.min.css" /><link rel="stylesheet" href="~/assets/css/font-awesome.css" /><link rel="stylesheet" href="~/css/admin.css" asp-append-version="true" /></head>
+<body class="admin-app">
+<a class="admin-skip" href="#admin-main">Đến nội dung quản lý</a>
+<aside class="admin-sidebar offcanvas-lg offcanvas-start" id="admin-sidebar" tabindex="-1" aria-labelledby="admin-sidebar-title">
+    <div class="offcanvas-header d-lg-none"><h2 class="offcanvas-title" id="admin-sidebar-title">Điều hướng quản trị</h2><button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" data-bs-target="#admin-sidebar" aria-label="Đóng menu"></button></div>
+    <div class="offcanvas-body"><a href="/admin/recipes" class="admin-brand">Bếp Nhà<span>TRANG QUẢN TRỊ</span></a><p class="sidebar-group">QUẢN LÝ NỘI DUNG</p>
+    <nav class="admin-side-nav" aria-label="Quản lý Bếp Nhà">
+        <a href="/admin/recipes" data-admin-section="recipes"><i class="fas fa-book-open" aria-hidden="true"></i><span>Công thức</span></a>
+        <a href="/admin/reviews" data-admin-section="reviews"><i class="far fa-star" aria-hidden="true"></i><span>Đánh giá</span></a>
+        <a href="/admin/categories" data-admin-section="categories"><i class="fas fa-tags" aria-hidden="true"></i><span>Danh mục</span></a>
+        <a href="/admin/users" data-admin-section="users"><i class="fas fa-users" aria-hidden="true"></i><span>Người dùng</span></a>
+    </nav>
+    <p class="sidebar-group account-group">TÀI KHOẢN</p>
+    <nav class="admin-side-nav" aria-label="Tài khoản quản trị">
+        <a href="/admin/profile" data-admin-section="profile"><i class="far fa-user-circle" aria-hidden="true"></i><span>Hồ sơ quản trị</span></a>
+    </nav>
+    <div class="sidebar-bottom"><a href="/admin/profile" class="sidebar-account"><span class="account-avatar"><i class="fas fa-user-shield"></i></span><div><b>@(User.Identity?.Name ?? "Quản trị viên")</b><small>Hồ sơ quản trị viên</small></div></a><form method="post" action="/auth/logout">@Html.AntiForgeryToken()<button type="submit"><i class="fas fa-sign-out-alt"></i> Đăng xuất</button></form></div>
+    </div>
+</aside>
+<div class="admin-workspace"><header class="admin-topbar"><div class="d-flex align-items-center gap-3"><button class="btn sidebar-toggle d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#admin-sidebar" aria-controls="admin-sidebar" aria-label="Mở menu quản trị"><i class="fas fa-bars"></i></button><div class="admin-breadcrumb">Bếp Nhà <span>/</span> Quản lý</div></div><span class="admin-role"><i class="fas fa-shield-alt"></i> Khu vực quản trị</span></header>
+<main class="admin-main" id="admin-main"><div class="admin-page-heading"><div><span class="admin-eyebrow">QUẢN TRỊ BẾP NHÀ</span><h1>@ViewData["Title"]</h1>@if (ViewData["Description"] is string description) { <p>@description</p> }</div></div>
+@if (TempData["Success"] is string success) { <div class="alert alert-success" role="status" data-auto-dismiss>@success</div> }
+@if (TempData["Error"] is string error) { <div class="alert alert-danger" role="alert" data-auto-dismiss>@error</div> }
+@RenderBody()
+</main><footer class="admin-footer">© @DateTime.Now.Year Bếp Nhà <span>Hệ thống quản lý cộng đồng chia sẻ công thức</span></footer></div>
+<script src="~/assets/js/jquery-3.7.1.min.js"></script><script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script><script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script><script src="~/assets/js/bootstrap.bundle.min.js"></script><script src="~/js/site.js" asp-append-version="true"></script><script>
+document.querySelectorAll('[data-admin-section]').forEach(function(link){if(location.pathname==='/admin'||location.pathname==='/admin/'||location.pathname.startsWith('/admin/'+link.dataset.adminSection)){if(location.pathname.startsWith('/admin/'+link.dataset.adminSection)||(link.dataset.adminSection==='recipes'&&(location.pathname==='/admin'||location.pathname==='/admin/'))){link.classList.add('active');link.setAttribute('aria-current','page');}}});
+</script>@await RenderSectionAsync("Scripts", required:false)
+</body></html>
